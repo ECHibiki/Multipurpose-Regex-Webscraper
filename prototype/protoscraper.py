@@ -18,9 +18,15 @@ import time
 
 # '''
 cap = webdriver.DesiredCapabilities.PHANTOMJS
-cap["phantomjs.page.settings.javascriptEnabled"] = False
+cap["phantomjs.page.settings.javascriptEnabled"] = True
 cap["phantomjs.page.settings.userAgent"] = "Mozilla"
 browser = webdriver.PhantomJS(desired_capabilities=cap)
+
+cap = webdriver.DesiredCapabilities.PHANTOMJS
+cap["phantomjs.page.settings.javascriptEnabled"] = False
+cap["phantomjs.page.settings.userAgent"] = "Mozilla"
+browser_nojs = webdriver.PhantomJS(desired_capabilities=cap)
+
 
 url = input('Enter URL address to rip: ')
 pattern = input('Enter regex pattern: ')
@@ -37,12 +43,14 @@ else:
 
 curs.execute("CREATE TABLE IF NOT EXISTS Matches(matches text PRIMARY KEY, pattern text, site text)")
 sql_con.commit()
-# \b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b
+# [^/]\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b[^0-9]*\d*
 print('Loading Pseudo-browser...')
 
 browser.get(url)
+browser_nojs.get(url)
 matches = re.findall(pattern, browser.page_source)
-print(browser.page_source)
+matches = matches + re.findall(pattern, browser_nojs.page_source)
+# print(browser.page_source)
 print(matches)
 print(time.time())
 # '''
@@ -72,9 +80,9 @@ if len(matches) > 0:
 curs.execute("SELECT * FROM Matches")
 items = curs.fetchall()
 match_file = open('matches.txt', 'w')
-match_file.write("\tMatch\t\t\t\t\t\tPattern\t\t\t\t\t\t\t\t\tURL\n")
+match_file.write("\tMatch\t\t\t\t\t\tPattern\t\t\t\t\t\t\t\tURL\n")
 for item in items:
     print(',\t'.join(item))
-    match_file.write(',\t\t'.join(item) + "\n")
+    match_file.write('\t\t\t'.join(item) + "\n")
 match_file.close()
 sql_con.close()
