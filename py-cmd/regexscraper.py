@@ -44,30 +44,30 @@ if __name__ == "__main__":
                     
                     if 'C:/Program ' in arg_val or "/var/www/html/" in arg_val :
                         print("Invalid Syntax : Regex should not be enclosed in /")
-                        exit();
+                        exit()
                     pass
                 elif arg == "--nojs":
                     nojs = True
                     pass
                 else:
                     print("Invalid Command Line Argument: " + arg)
-                    exit();
+                    exit()
             except IndexError:
                 print("Invalid Syntax : Index Error")
-                exit();
+                exit()
             except:
                 print("Invalid Syntax : Undefined Error")
-                exit();
+                exit()
             details[arg] = arg_val
     if '-u' not in details:
         print("Missing URL : -u")
-        exit();
+        exit()
     if '-r' not in details:
         print("Missing Regex: -r")
-        exit();
+        exit()
     init(details['-u'])
     matches = scrape_page(details['-r'])
     for match in matches:
         print (match)
-    browser.close
-    
+    browser.close()
+    exit()
