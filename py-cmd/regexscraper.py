@@ -4,12 +4,22 @@ from sys import platform
 import sys
 import re
 import string
+import json
 
 browser = None
 nojs = False
+output_json = False
 
-def init(site):
-    global browser
+def print_matches(matches):
+    global output_json
+    if output_json:
+        print(json.dumps(matches))
+    else:
+        for match in matches:
+            print (match)
+
+def init():
+    global browser, nojs
     if platform == "linux" or platform == "linux2":
         display = Display(visible=0, size=(800, 600))
         display.start()
@@ -20,10 +30,14 @@ def init(site):
     ff_profile.update_preferences()
     browser = webdriver.Firefox(firefox_profile=ff_profile)
     #browser.get("about:config")
-    browser.get(site)
 
-def scrape_page(pattern):
-    matches = re.findall(pattern, browser.page_source)
+def scrape_pages(site_list, pattern):
+    global browser
+    site_list_arr = site_list.split(',')
+    matches = []
+    for site in site_list_arr:
+        browser.get(site)
+        matches = matches + re.findall(pattern, browser.page_source)
     return matches
     
 if __name__ == "__main__":
@@ -49,6 +63,9 @@ if __name__ == "__main__":
                 elif arg == "--nojs":
                     nojs = True
                     pass
+                elif arg == "--json":
+                    output_json = True
+                    pass
                 else:
                     print("Invalid Command Line Argument: " + arg)
                     exit()
@@ -65,9 +82,7 @@ if __name__ == "__main__":
     if '-r' not in details:
         print("Missing Regex: -r")
         exit()
-    init(details['-u'])
-    matches = scrape_page(details['-r'])
-    for match in matches:
-        print (match)
+    init()
+    print_matches(scrape_pages(details['-u'], details['-r']))
     browser.close()
     exit()
