@@ -84,5 +84,5 @@ if __name__ == "__main__":
         exit()
     init()
     print_matches(scrape_pages(details['-u'], details['-r']))
-    browser.close()
+    browser.quit()
     exit()
