@@ -19,10 +19,8 @@ def print_matches(matches):
             print (match)
 
 def init():
+    # On ubuntu/linux initialize with xvfb-run python3 Regex-Webscraper/py-cmd/regexscraper.py -u $sites_string -r \"$regex_pattern\" --nojs --json
     global browser, nojs
-    if platform == "linux" or platform == "linux2":
-        display = Display(visible=0, size=(800, 600))
-        display.start()
     ff_profile = webdriver.FirefoxProfile()
     ff_profile.DEFAULT_PREFERENCES['frozen']['javascript.enabled'] = not nojs
     ff_profile.set_preference("app.update.auto", False)
