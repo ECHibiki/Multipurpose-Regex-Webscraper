@@ -3,6 +3,8 @@ A CLI for retrieving info from web pages done on python3.7 <br/><br/>
 python3 regexscraper -u "https://example.com" -r "(t|r)est"<br/>
 This outputs all regex matches on site -s with pattern -r using selenium JS rendered sites 
 <br/>
+## Important:
+Selenium is one of those things that takes up more memory than it needs to. Take that into account in use.
 ## Things: 
 https://stackoverflow.com/questions/39547598/selenium-common-exceptions-webdriverexception-message-connection-refused<br/>
 https://stackoverflow.com/questions/8220108/how-do-i-check-the-operating-system-in-python<br/>
