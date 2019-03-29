@@ -14,10 +14,13 @@ raw = False
 
 def print_matches(matches):
     global output_json
+    i = 0
     if output_json:
         print(json.dumps(matches))
     else:
         for match in matches:
+            if match.strip() == "":
+                continue
             print (match)
 
 def init():
