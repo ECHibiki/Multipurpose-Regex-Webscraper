@@ -5,10 +5,12 @@ import sys
 import re
 import string
 import json
+import requests
 
 browser = None
 nojs = False
 output_json = False
+raw = False
 
 def print_matches(matches):
     global output_json
@@ -37,7 +39,16 @@ def scrape_pages(site_list, pattern):
         browser.get(site)
         matches = matches + re.findall(pattern, browser.page_source)
     return matches
-    
+
+def raw_scrape_pages(site_list, pattern):
+    global browser
+    site_list_arr = site_list.split(',')
+    matches = []
+    for site in site_list_arr:
+        page_text = requests.get(site).text
+        matches = matches + re.findall(pattern, page_text)
+    return matches
+
 if __name__ == "__main__":
     argv = sys.argv
     details = {}
@@ -53,7 +64,7 @@ if __name__ == "__main__":
                     pass
                 elif arg == "-r":
                     arg_val = argv[index + 1]
-                    
+
                     if 'C:/Program ' in arg_val or "/var/www/html/" in arg_val :
                         print("Invalid Syntax : Regex should not be enclosed in /")
                         exit()
@@ -63,6 +74,9 @@ if __name__ == "__main__":
                     pass
                 elif arg == "--json":
                     output_json = True
+                    pass
+                elif arg == "--raw":
+                    raw = True
                     pass
                 else:
                     print("Invalid Command Line Argument: " + arg)
@@ -80,7 +94,10 @@ if __name__ == "__main__":
     if '-r' not in details:
         print("Missing Regex: -r")
         exit()
-    init()
-    print_matches(scrape_pages(details['-u'], details['-r']))
-    browser.quit()
+    if raw:
+        print_matches(raw_scrape_pages(details['-u'], details['-r']))
+    else:
+        init()
+        print_matches(scrape_pages(details['-u'], details['-r']))
+        browser.quit()
     exit()
