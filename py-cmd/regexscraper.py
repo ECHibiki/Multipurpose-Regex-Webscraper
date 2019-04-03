@@ -6,6 +6,7 @@ import re
 import string
 import json
 import requests
+import traceback
 
 browser = None
 nojs = False
@@ -48,8 +49,14 @@ def raw_scrape_pages(site_list, pattern):
     site_list_arr = site_list.split(',')
     matches = []
     for site in site_list_arr:
-        page_text = requests.get(site).text
-        matches = matches + re.findall(pattern, page_text)
+        try:
+            page_text = requests.get(site, timeout=15.00).text
+            matches = matches + re.findall(pattern, page_text)
+        except Exception as err:
+            print(site + " " + "Not found")
+            with open("err_log.txt", "a+") as log:
+                log.write(str(traceback.format_exc()) + "\n\n")
+                log.close
     return matches
 
 if __name__ == "__main__":
